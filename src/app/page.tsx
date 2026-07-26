@@ -1,30 +1,10 @@
 import { ProjectCard } from "@/components/ProjectCard";
 import { SiteFooter } from "@/components/SiteFooter";
-
-const projects = [
-  {
-    name: "GTM Intelligence Platform",
-    description:
-      "Agentic account intelligence for GTM teams. Sources, verifies, enriches, and scores net-new accounts against a weighted ICP rubric you define and tune in-app. Built entirely on free tools.",
-    tags: ["Python", "Claude API", "Supabase", "Streamlit", "Tavily"],
-    status: "live" as const,
-    href: "/projects/gtm-intelligence-platform",
-  },
-  {
-    name: "SovereignAI",
-    description: "A synthetic RevOps data engine. Details coming soon.",
-    tags: ["Python", "PostgreSQL", "ETL"],
-    status: "soon" as const,
-  },
-  {
-    name: "More coming",
-    description: "Another RevOps system in progress.",
-    tags: ["RevOps"],
-    status: "soon" as const,
-  },
-];
+import { getAllProjects } from "@/lib/projects";
 
 export default function Home() {
+  const projects = getAllProjects();
+
   return (
     <main className="flex flex-1 justify-center bg-background px-6 py-24 sm:px-12">
       <div className="flex w-full max-w-[720px] flex-col items-start">
@@ -49,7 +29,18 @@ export default function Home() {
 
         <div className="mt-6 flex w-full flex-col gap-4">
           {projects.map((project) => (
-            <ProjectCard key={project.name} {...project} />
+            <ProjectCard
+              key={project.slug}
+              name={project.title}
+              description={project.tagline}
+              tags={project.stack}
+              status={project.status}
+              href={
+                project.status === "live"
+                  ? `/projects/${project.slug}`
+                  : undefined
+              }
+            />
           ))}
         </div>
 
