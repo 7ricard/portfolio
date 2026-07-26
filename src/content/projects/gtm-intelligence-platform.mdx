@@ -8,4 +8,68 @@ repo: https://github.com/7ricard/gtm-intelligence-platform
 order: 1
 ---
 
-Case study content coming soon.
+## Why I built it
+
+I built this out of domain knowledge, curiosity, and the fun of finding a tool's edges. I wanted to explore how far free resources go when you build a real lead-generation engine, and where tools like Clay and Apollo genuinely start to earn their cost. Knowing that boundary makes me better at my actual job: telling a client how much they can get for free, whether Clay is necessary, at what stage, and how far a free in-house build will move the needle.
+
+Because at the end of the day, clients pay me to do one thing: grow the bottom line. And that happens not just by creating more leads, better conversions, and enabling reps to be far more productive, but by spending smarter, where it matters, where the money spent is money seeded to grow. Finding where free stops being enough is exactly that kind of question.
+
+It was also just a good excuse to build. We have an overwhelming number of capable new tools right now, enough that choosing a stack well is its own skill, so this doubled as an exercise in discernment, with none of the stakes and all of the fun.
+
+## Who it's for
+
+The primary user is an early-stage company with no RevOps function yet, a founder or small team that needs to turn on a pipeline engine without hiring an operator or committing to a platform contract. They're doing their own prospecting, or they have no systematic sourcing motion at all. It also serves teams currently paying for Clay or Apollo who want to understand what a free in-house build actually moves, and anyone still researching accounts by hand in spreadsheets.
+
+## What it does
+
+Three connected surfaces, built to run as one workflow.
+
+A configurable ICP engine. You define your ideal customer profile (firmographics, target personas, buying signals, and negative-ICP disqualifiers) and save it. Multiple profiles can coexist, so you can switch the entire engine between, say, "Series A B2B SaaS" and "Series B Fintech" with a dropdown. The ICP lives in a database as editable data, not hardcoded, so it's tunable on the fly.
+
+<MediaPlaceholder label="GIF">
+  ICP Profile tab. Editing a weight, the sum-to-100 guard reacting, then switching the active profile via the dropdown.
+</MediaPlaceholder>
+
+Autonomous discovery. This is the core. You give it an active ICP and it runs the full sourcing funnel: it turns your ICP into search queries, sources candidate companies from the open web, extracts and dedupes them, pre-filters the obvious non-fits, resolves each company's real domain, verifies it found the right entity, then enriches, scores, and ranks the survivors. What comes back is a tiered list, A+ through C, of companies it found on its own.
+
+<MediaPlaceholder label="GIF" hero>
+  A discovery run resolving into the ranked A+/A/B/C list with the match-confidence column.
+</MediaPlaceholder>
+
+Single-company research. For a known target, a deep dive: it scrapes the company, builds a GTM brief, enriches it from public sources, and scores it against your ICP, with the full reasoning shown.
+
+<MediaPlaceholder label="LOOM">
+  A 60-to-90-second walkthrough of all three tabs in sequence, ICP, Discover, Research, narrating what each does and how they connect. Optional voiceover.
+</MediaPlaceholder>
+
+## How it works
+
+The engineering is where the interesting decisions live.
+
+The enrichment waterfall. To gather firmographic data (funding, revenue, headcount, leadership) on a company, the tool cascades through three free sources in order of structure and cost: Wikidata first (free, structured, clean typed facts, no LLM needed), then SEC EDGAR (authoritative but public-company-only), then Tavily agentic web search last (the broadest source, but the noisiest and the one that consumes limited free credits, so it's the fallback, not the first call).
+
+The insight that emerged from building it: for my actual ICP, the structured rungs almost always miss. Series A private startups are rarely in Wikidata and never in SEC filings, so for a genuinely on-target account, both structured sources come up empty and agentic search carries the entire load. That's not a failure of the waterfall, it's the waterfall adapting correctly to the segment, and it's precisely why the search rung matters: it's the only thing that can enrich the early-stage private companies that structured databases ignore.
+
+The harder problem turned out to be reconciliation. Web search returns contradictions, enriching one company surfaced three different revenue figures from three sources. So the reconciliation layer's real job became adjudication, not extraction: weigh each source's credibility and recency, prefer the most recent credible figure, and attach a confidence rating with its reasoning rather than trusting the first number it sees. Entity resolution compounded this: loose name matching pulled unrelated entities into records (a Finnish city for one company, an unrelated public filer for another), which forced stricter matching and a verification step. Most of the enricher's actual intelligence ended up living in that reconciliation logic.
+
+<MediaPlaceholder label="GIF">
+  An enrichment record (Stripe or Vanta) showing funding, ARR, named buyers, the source URLs, and the confidence rating.
+</MediaPlaceholder>
+
+The hybrid scoring engine. Scoring is deliberately split. The LLM scores each ICP dimension individually (the fuzzy, judgment-heavy work it's genuinely good at), and then deterministic code does the weighting and tier assignment (plain, auditable math). I designed it this way from the start, for reproducibility and defensibility. If you let a model output a final tier holistically, you can't answer "why is this an A and that a B" with anything better than "the model decided," and the same company can score differently on two runs because nothing anchors the decision. With the split, every score decomposes into its dimensions and their contributions, so I can defend "this scored 84 because it hit on size, stage, and three buying signals, here's the math" rather than pointing at a black box. For a RevOps tool, where the whole point is a consistent, governable decision the team can trust, that reproducibility is the feature.
+
+Entity verification. Because free sourcing relies on matching company names to domains, generic short names ("Lio", "Nue") risk resolving to the wrong site. The tool cross-checks each resolved domain against what the sourcing context said about the company, using data already in hand, and quarantines low-confidence matches out of the ranked results rather than letting a wrong-entity score sit at the top of the list.
+
+## The honest limitations
+
+This is a free approximation of paid platforms, not a replacement for them, and being precise about the boundary is the point of the exercise.
+
+The clearest gap is sourcing precision. Clay and Apollo query proprietary structured databases, so they can filter exactly on "Series A, $2M to $10M ARR." Free discovery sources candidates from search, which skews toward companies that got press coverage, so it surfaces later-stage names that the scorer then has to filter out. The scoring is honest; the top of the funnel is imprecise. There's also no true intent data, paid platforms layer in behavioral signals (category research, pricing-page visits) that simply aren't available for free, so this tool sees public trigger events (funding, hiring) rather than real-time buying intent. And data completeness favors companies that get written about, so quieter targets come back thin.
+
+The takeaway that makes the whole project worthwhile: the real moat of Clay and Apollo isn't the workflow on top, which is very replicable, it's the proprietary structured database underneath, which isn't. Knowing exactly where that line falls is what lets me tell a client how far free will take them, and when writing the check for Clay is the smarter use of capital.
+
+## Stack
+
+Python, Anthropic Claude API, Supabase and Postgres, Streamlit, Tavily (agentic web search), Wikidata and SEC EDGAR (free structured data), BeautifulSoup. Built with Claude Code.
+
+[View the repository on GitHub](https://github.com/7ricard/gtm-intelligence-platform)

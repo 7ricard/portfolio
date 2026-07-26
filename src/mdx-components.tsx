@@ -1,9 +1,10 @@
 import type { MDXComponents } from "mdx/types";
+import { MediaPlaceholder } from "@/components/MediaPlaceholder";
 
 const components: MDXComponents = {
   h2: (props) => (
     <h2
-      className="mt-12 text-2xl font-semibold text-foreground"
+      className="mt-20 font-mono text-xs uppercase tracking-[0.2em] text-muted"
       {...props}
     />
   ),
@@ -40,6 +41,7 @@ const components: MDXComponents = {
       {...props}
     />
   ),
+  MediaPlaceholder,
 };
 
 export function useMDXComponents(): MDXComponents {
