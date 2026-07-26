@@ -57,7 +57,7 @@ export function SiteFooter() {
         <CopyEmail />
       </div>
 
-      <p className="mt-6 text-sm text-muted">Ricardo Gonzalez-Murillo</p>
+      <p className="mt-6 text-sm text-muted">Ricardo Gonzalez M.</p>
     </div>
   );
 }

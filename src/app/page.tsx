@@ -1,5 +1,4 @@
 import { ProjectCard } from "@/components/ProjectCard";
-import { SiteFooter } from "@/components/SiteFooter";
 import { getAllProjects } from "@/lib/projects";
 
 export default function Home() {
@@ -65,9 +64,6 @@ export default function Home() {
           I take on fractional, consulting, and project-based work. Open to
           full-time for the right team and opportunity.
         </p>
-
-        {/* Contact */}
-        <SiteFooter />
       </div>
     </main>
   );
