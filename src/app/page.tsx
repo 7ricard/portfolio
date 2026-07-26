@@ -22,7 +22,10 @@ export default function Home() {
         </p>
 
         {/* Projects */}
-        <span className="mt-20 font-mono text-xs uppercase tracking-[0.2em] text-muted">
+        <span
+          id="projects"
+          className="mt-20 font-mono text-xs uppercase tracking-[0.2em] text-muted"
+        >
           Projects
         </span>
 

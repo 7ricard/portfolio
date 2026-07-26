@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 
@@ -22,7 +23,15 @@ export default async function ProjectPage({
   return (
     <main className="flex flex-1 justify-center bg-background px-6 py-24 sm:px-12">
       <div className="flex w-full max-w-[720px] flex-col items-start">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
+        <Link
+          href="/#projects"
+          className="inline-flex items-center gap-2 font-mono text-sm text-muted transition-colors hover:text-accent"
+        >
+          <span aria-hidden="true">&larr;</span>
+          Back to projects
+        </Link>
+
+        <span className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-muted">
           Case Study
         </span>
 
